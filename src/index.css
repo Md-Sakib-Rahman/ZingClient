@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: mytheme --default;
+}
+
+@plugin "daisyui/theme" {
+  name: "mytheme";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  /* --- Brand Colors --- */
+  /* Primary: Deep Forest Green (#1A2B23) */
+  --color-primary: oklch(24.47% 0.023 167.31);
+  --color-primary-content: oklch(98% 0.01 167);
+
+  /* Secondary: Muted Camel/Tan (#C5A386) */
+  --color-secondary: oklch(71.05% 0.068 76.51);
+  --color-secondary-content: oklch(25% 0.02 76);
+
+  /* Accent: Warm Grey (#E5E0D8) */
+  --color-accent: oklch(90.15% 0.012 85.83);
+  --color-accent-content: oklch(33% 0.01 85);
+
+  /* --- Base Colors --- */
+  /* Base 100: Off-White/Linen Background (#F9F7F2) */
+  --color-base-100: oklch(97.6% 0.007 86.15);
+  /* Base 200: Slightly darker for sections/dividers (#E5E0D8) */
+  --color-base-200: oklch(90.15% 0.012 85.83);
+  /* Base 300: Used for borders/hover states */
+  --color-base-300: oklch(85% 0.015 85);
+  /* Base Content: Soft Charcoal Text (#333333) */
+  --color-base-content: oklch(27.87% 0 0);
+
+  /* --- Semantic Colors --- */
+  --color-info: oklch(70% 0.05 240);
+  --color-success: oklch(65% 0.1 150);
+  --color-warning: oklch(85% 0.1 80);
+  --color-error: oklch(65% 0.15 30);
+
+  /* --- UI Refinement --- */
+  --radius-selector: 0.5rem; /* Slightly more elegant/less bubbly */
+  --radius-field: 0.125rem; /* Sharper fields for a high-end feel */
+  --radius-box: 0.375rem;
+  --border: 1px;
+  --depth: 0.5; /* Subtle shadows for "Quiet Luxury" */
+  --noise: 0;
+}
+
+
+.inter {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.montserrat  {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
