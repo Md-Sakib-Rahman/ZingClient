@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="footer sm:footer-horizontal bg-primary text-primary-content p-10 mt-10 mx-auto flex justify-between max-w-11/12 rounded-3xl my-10">
+    <footer className="footer sm:footer-horizontal bg-primary text-primary-content p-10 mt-10 mx-auto flex justify-between max-sm:flex-col max-w-11/12 rounded-3xl my-10">
       <nav>
         <h6 className="footer-title">Services</h6>
         <a className="link link-hover">Branding</a>
@@ -31,7 +31,7 @@ const Footer = () => {
             <input
               type="text"
               placeholder="username@site.com"
-              className="input input-bordered join-item"
+              className="input input-bordered join-item w-full"
             />
             <button className="btn btn-primary join-item">Subscribe</button>
           </div>
