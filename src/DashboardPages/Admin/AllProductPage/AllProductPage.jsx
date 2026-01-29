@@ -57,20 +57,17 @@ const AllProductPage = () => {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      // Build Query String
       const params = new URLSearchParams();
       params.append("page", pagination.page);
       params.append("limit", pagination.limit);
       if (filters.search) params.append("search", filters.search);
       if (filters.category) params.append("category_id", filters.category);
       if (filters.subcategory) params.append("subcategory_id", filters.subcategory);
-      // Add price params if your API supports them
       if (filters.min_price) params.append("min_price", filters.min_price);
 
       const res = await axiosInstance.get(`/products/search-products/?${params.toString()}`);
-      console.log(res.data);
       setProducts(res.data.results || []);
-      // console.log(res.data.results)
+      
       setPagination(prev => ({
         ...prev,
         totalPages: res.data.total_pages,
@@ -83,7 +80,6 @@ const AllProductPage = () => {
     }
   }, [pagination.page, filters]);
 
-  // Trigger fetch when dependencies change
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -109,7 +105,7 @@ const AllProductPage = () => {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
-    setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1 on filter
+    setPagination(prev => ({ ...prev, page: 1 })); 
   };
 
   const getCategoryName = (id) => attributes.categories.find(c => c._id === id)?.name || "N/A";
@@ -118,8 +114,8 @@ const AllProductPage = () => {
     const color = attributes.colors.find(c => c._id === id);
     return color ? color.name.toLowerCase().replace(" ", "") : "#eee";
   };
+
   const handleDeleteProduct = async (productId) => {
-    // 1. Confirm deletion
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -132,29 +128,16 @@ const AllProductPage = () => {
 
     if (result.isConfirmed) {
       try {
-        // 2. Call API
         await axiosInstance.delete(`/products/delete-product/${productId}/`);
-        
-        // 3. Success Message
-        Swal.fire(
-          'Deleted!',
-          'Your product has been deleted.',
-          'success'
-        );
-
-        // 4. Refresh the list to remove the deleted item from UI
+        Swal.fire('Deleted!', 'Your product has been deleted.', 'success');
         fetchProducts(); 
-        
       } catch (error) {
         console.error("Delete failed:", error);
-        Swal.fire(
-          'Error!',
-          'Failed to delete product. Please try again.',
-          'error'
-        );
+        Swal.fire('Error!', 'Failed to delete product. Please try again.', 'error');
       }
     }
   };
+
   return (
     <div className="space-y-6 font-inter text-primary">
       
@@ -182,7 +165,6 @@ const AllProductPage = () => {
 
       {/* --- Filter Bar --- */}
       <div className="bg-white p-5 rounded-sm border border-accent/20 shadow-sm grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {/* Search */}
         <div className="md:col-span-2 relative">
           <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" size={18} />
           <input 
@@ -195,7 +177,6 @@ const AllProductPage = () => {
           />
         </div>
 
-        {/* Category Select */}
         <select 
           name="category" 
           value={filters.category}
@@ -208,7 +189,6 @@ const AllProductPage = () => {
           ))}
         </select>
 
-        {/* Subcategory Select (Dependent) */}
         <select 
           name="subcategory" 
           value={filters.subcategory}
@@ -222,7 +202,6 @@ const AllProductPage = () => {
           ))}
         </select>
 
-        {/* Status / Stock Filter Placeholder */}
         <select className="px-3 py-2.5 bg-white border border-accent/20 rounded-sm text-sm focus:border-primary outline-none">
           <option value="">Stock Status</option>
           <option value="in_stock">In Stock</option>
@@ -249,7 +228,6 @@ const AllProductPage = () => {
             
             <tbody className="divide-y divide-accent/10">
               {loading ? (
-                // Loading Skeleton Rows
                 [...Array(5)].map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     <td className="p-4"><div className="h-10 w-10 bg-gray-200 rounded-sm"></div></td>
@@ -268,91 +246,111 @@ const AllProductPage = () => {
                   </td>
                 </tr>
               ) : (
-                products.map((product) => (
-                  <tr key={product._id} className="hover:bg-gray-50/50 transition-colors group">
-                    
-                    {/* Image */}
-                    <td className="p-4">
-                      <div className="h-10 w-10 rounded-sm overflow-hidden bg-gray-100 border border-accent/10">
-                        {product.image_urls?.[0] ? (
-                          <img src={product.image_urls[0]} alt="" className="h-full w-full object-cover" />
-                        ) : (
-                          <FaBoxOpen className="h-full w-full p-2 text-gray-300" />
-                        )}
-                      </div>
-                    </td>
+                products.map((product) => {
+                  
+                  // --- DISCOUNT CALCULATION ---
+                  const hasDiscount = product.discount && product.discount > 0 && product.discount < 1;
+                  const discountedPrice = hasDiscount ? product.price * (1 - product.discount) : product.price;
+                  const discountPercentage = hasDiscount ? Math.round(product.discount * 100) : 0;
 
-                    {/* Name & ID */}
-                    <td className="p-4">
-                      <p className="font-bold text-sm text-primary truncate max-w-[200px]" title={product.name}>
-                        {product.name}
-                      </p>
-                      <p className="text-[9px] text-primary/40 font-mono mt-0.5">ID: {product._id.slice(-6).toUpperCase()}</p>
-                    </td>
+                  return (
+                    <tr key={product._id} className="hover:bg-gray-50/50 transition-colors group">
+                      
+                      {/* Image */}
+                      <td className="p-4">
+                        <div className="h-10 w-10 rounded-sm overflow-hidden bg-gray-100 border border-accent/10 relative">
+                           {/* Tiny discount dot on image for quick scan */}
+                           {hasDiscount && <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-bl-sm"></div>}
+                           
+                          {product.image_urls?.[0] ? (
+                            <img src={product.image_urls[0]} alt="" className="h-full w-full object-cover" />
+                          ) : (
+                            <FaBoxOpen className="h-full w-full p-2 text-gray-300" />
+                          )}
+                        </div>
+                      </td>
 
-                    {/* Category */}
-                    <td className="p-4">
-                      <span className="inline-flex items-center px-2 py-1 rounded-sm bg-accent/5 text-[10px] font-bold text-primary/70 uppercase tracking-wider">
-                        {getCategoryName(product.category_id)}
-                      </span>
-                    </td>
+                      {/* Name & ID */}
+                      <td className="p-4">
+                        <p className="font-bold text-sm text-primary truncate max-w-[200px]" title={product.name}>
+                          {product.name}
+                        </p>
+                        <p className="text-[9px] text-primary/40 font-mono mt-0.5">ID: {product._id.slice(-6).toUpperCase()}</p>
+                      </td>
 
-                    {/* Price */}
-                    <td className="p-4">
-                      <span className="font-serif italic font-bold">Tk {product.price}</span>
-                    </td>
+                      {/* Category */}
+                      <td className="p-4">
+                        <span className="inline-flex items-center px-2 py-1 rounded-sm bg-accent/5 text-[10px] font-bold text-primary/70 uppercase tracking-wider">
+                          {getCategoryName(product.category_id)}
+                        </span>
+                      </td>
 
-                    {/* Stock */}
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                         {/* Status Dot */}
-                         <span className={`w-2 h-2 rounded-full ${product.stock > 5 ? 'bg-secondary' : product.stock > 0 ? 'bg-yellow-400' : 'bg-red-500'}`}></span>
-                         <span className={`text-xs font-medium ${product.stock === 0 ? 'text-red-500' : 'text-primary/80'}`}>
-                           {product.stock} units
-                         </span>
-                      </div>
-                    </td>
+                      {/* Price (UPDATED LOGIC) */}
+                      <td className="p-4">
+                         {hasDiscount ? (
+                            <div className="flex flex-col items-start">
+                               <div className="flex items-center gap-2">
+                                  <span className="font-bold text-primary">Tk {discountedPrice.toLocaleString()}</span>
+                                  <span className="text-[9px] bg-red-50 text-red-600 border border-red-100 px-1 rounded font-bold">-{discountPercentage}%</span>
+                               </div>
+                               <span className="text-[10px] text-gray-400 line-through decoration-red-300">Tk {product.price.toLocaleString()}</span>
+                            </div>
+                         ) : (
+                            <span className="font-serif italic font-bold">Tk {product.price.toLocaleString()}</span>
+                         )}
+                      </td>
 
-                    {/* Variants (Visual Hydration) */}
-                    <td className="p-4">
-                      <div className="flex -space-x-1">
-                        {product.color_ids?.slice(0, 4).map((id, idx) => (
-                          <div 
-                            key={idx} 
-                            className="w-4 h-4 rounded-full border border-white ring-1 ring-gray-100"
-                            style={{ backgroundColor: getColorHex(id) }}
-                            title="Color Variant"
-                          />
-                        ))}
-                        {(product.color_ids?.length > 4) && (
-                          <div className="w-4 h-4 rounded-full bg-gray-100 border border-white flex items-center justify-center text-[8px] text-gray-500 font-bold">
-                            +
-                          </div>
-                        )}
-                      </div>
-                    </td>
+                      {/* Stock */}
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                           <span className={`w-2 h-2 rounded-full ${product.stock > 5 ? 'bg-secondary' : product.stock > 0 ? 'bg-yellow-400' : 'bg-red-500'}`}></span>
+                           <span className={`text-xs font-medium ${product.stock === 0 ? 'text-red-500' : 'text-primary/80'}`}>
+                             {product.stock} units
+                           </span>
+                        </div>
+                      </td>
 
-                    {/* Actions */}
-                    <td className="p-4 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button 
-                          onClick={() => navigate(`/admin/product/edit/${product._id}`)}
-                          className="p-1.5 text-primary/60 hover:text-secondary hover:bg-secondary/10 rounded-sm transition-colors"
-                          title="Edit Product"
-                        >
-                          <MdEdit size={16} />
-                        </button>
-                        <button 
-                           onClick={() => handleDeleteProduct(product._id)}
-                           className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-sm transition-colors"
-                           title="Delete Product"
-                        >
-                          <MdDelete size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      {/* Variants */}
+                      <td className="p-4">
+                        <div className="flex -space-x-1">
+                          {product.color_ids?.slice(0, 4).map((id, idx) => (
+                            <div 
+                              key={idx} 
+                              className="w-4 h-4 rounded-full border border-white ring-1 ring-gray-100"
+                              style={{ backgroundColor: getColorHex(id) }}
+                              title="Color Variant"
+                            />
+                          ))}
+                          {(product.color_ids?.length > 4) && (
+                            <div className="w-4 h-4 rounded-full bg-gray-100 border border-white flex items-center justify-center text-[8px] text-gray-500 font-bold">
+                              +
+                            </div>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="p-4 text-right">
+                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button 
+                            onClick={() => navigate(`/admin/product/edit/${product._id}`)}
+                            className="p-1.5 text-primary/60 hover:text-secondary hover:bg-secondary/10 rounded-sm transition-colors"
+                            title="Edit Product"
+                          >
+                            <MdEdit size={16} />
+                          </button>
+                          <button 
+                             onClick={() => handleDeleteProduct(product._id)}
+                             className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-sm transition-colors"
+                             title="Delete Product"
+                          >
+                            <MdDelete size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -374,7 +372,7 @@ const AllProductPage = () => {
             </button>
             <span className="text-xs font-bold px-2">Page {pagination.page}</span>
             <button 
-              disabled={!products.length || products.length < pagination.limit} // Simplified check, ideally use has_next
+              disabled={!products.length || products.length < pagination.limit} 
               onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
               className="p-1.5 border border-accent/20 rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white hover:border-primary transition-all"
             >

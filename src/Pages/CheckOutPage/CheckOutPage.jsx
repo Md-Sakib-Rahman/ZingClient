@@ -194,7 +194,7 @@ const CheckOutPage = () => {
                       <div className="flex justify-between items-start">
                         <h3 className="text-sm font-bold text-primary">{item.product?.name}</h3>
                         <p className="text-sm font-bold text-primary">
-                          ${(item.product?.price * item.quantity).toFixed(2)}
+                          Tk {(item.product?.price * item.quantity).toFixed(2)}
                         </p>
                       </div>
                       
@@ -213,15 +213,15 @@ const CheckOutPage = () => {
               <div className="mt-8 pt-6 border-t border-accent/10 space-y-3">
                 <div className="flex justify-between text-sm text-primary/70">
                   <span>Subtotal</span>
-                  <span>${orderSummary.subtotal.toFixed(2)}</span>
+                  <span>Tk {orderSummary.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-primary/70">
                   <span>Shipping</span>
-                  <span>${orderSummary.shipping.toFixed(2)}</span>
+                  <span>Tk {orderSummary.shipping.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold text-primary pt-4 border-t border-accent/10">
                   <span>Total to Pay</span>
-                  <span>${orderSummary.total.toFixed(2)}</span>
+                  <span>Tk {orderSummary.total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -276,7 +276,7 @@ const CheckOutPage = () => {
                   disabled={submitting}
                   className="w-full bg-primary text-white py-4 text-xs uppercase tracking-[0.2em] font-bold hover:bg-primary/90 transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-lg"
                 >
-                  {submitting ? "Processing..." : `Place Order ($${orderSummary.total.toFixed(2)})`}
+                  {submitting ? "Processing..." : `Place Order (Tk ${orderSummary.total.toFixed(2)})`}
                 </button>
               </form>
             </div>

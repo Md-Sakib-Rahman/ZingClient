@@ -112,6 +112,7 @@ const CartPage = () => {
           item_id: itemToUpdate.item_id || itemToUpdate._id, // Ensure we use the Cart Item ID
           quantity: newQty 
         });
+        window.dispatchEvent(new Event("cart-updated"));
       } catch (err) {
         console.error("Update failed", err);
       }
@@ -123,6 +124,7 @@ const CartPage = () => {
         attributes: item.attributes
       }));
       localStorage.setItem("zing_cart", JSON.stringify(localCart));
+      window.dispatchEvent(new Event("cart-updated"));
     }
   };
 
@@ -195,7 +197,7 @@ const CartPage = () => {
 
       try {
         await axiosInstance.delete(`cart/remove-item/${itemIdToSend}/`);
-
+        window.dispatchEvent(new Event("cart-updated"));
         // Update UI
         const updatedItems = cartItems.filter((_, i) => i !== index);
         setCartItems(updatedItems);
@@ -228,7 +230,7 @@ const CartPage = () => {
         
         // Trigger event so Navbar updates count
         window.dispatchEvent(new Event("storage"));
-        
+        window.dispatchEvent(new Event("cart-updated"));
         Swal.fire({
           icon: 'success', title: 'Removed', toast: true,
           position: 'top-end', showConfirmButton: false, timer: 2000
@@ -302,7 +304,7 @@ const CartPage = () => {
                             </Link>
                           </h3>
                           <p className="text-sm font-serif italic text-primary font-bold">
-                            ${(productPrice * item.quantity).toFixed(2)}
+                            Tk  {(productPrice * item.quantity).toFixed(2)}
                           </p>
                         </div>
                         
@@ -357,7 +359,7 @@ const CartPage = () => {
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-sm text-primary/70">
                     <span>Subtotal</span>
-                    <span>${orderSummary.subtotal.toFixed(2)}</span>
+                    <span>Tk {orderSummary.subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm text-primary/70">
                     <span>Shipping Estimate</span>
@@ -365,7 +367,7 @@ const CartPage = () => {
                       {orderSummary.shipping === 0 ? (
                         <span className="text-secondary font-bold text-[10px] uppercase tracking-widest">Free</span>
                       ) : (
-                        `$${orderSummary.shipping.toFixed(2)}`
+                        `Tk${orderSummary.shipping.toFixed(2)}`
                       )}
                     </span>
                   </div>
@@ -374,7 +376,7 @@ const CartPage = () => {
                 <div className="flex justify-between items-end pt-6 border-t border-accent/10 mb-8">
                   <span className="text-sm font-bold text-primary">Total</span>
                   <span className="text-2xl font-serif italic text-primary font-bold">
-                    ${orderSummary.total.toFixed(2)}
+                    Tk {orderSummary.total.toFixed(2)}
                   </span>
                 </div>
 

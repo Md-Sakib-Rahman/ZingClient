@@ -194,7 +194,7 @@ const OrderPage = () => {
              <div className="p-3 bg-green-50 text-green-600 rounded-full"><FaMoneyBillWave /></div>
              <div>
                 <p className="text-[10px] uppercase font-bold text-primary/40">Realized Revenue</p>
-                <h3 className="text-xl font-bold text-primary">${analytics.total_revenue.toLocaleString()}</h3>
+                <h3 className="text-xl font-bold text-primary">Tk {analytics.total_revenue.toLocaleString()}</h3>
              </div>
           </div>
           <div className="bg-white p-5 rounded-sm border border-accent/20 shadow-sm flex items-center gap-4">
@@ -274,7 +274,7 @@ const OrderPage = () => {
                     <td className="p-4"><span className="font-mono text-xs text-primary/70">...{order._id.slice(-6)}</span></td>
                     <td className="p-4 text-xs text-primary/80">{order.created_at ? new Date(order.created_at).toLocaleDateString() : "N/A"}</td>
                     <td className="p-4 text-xs text-primary/80 truncate max-w-[120px]">User: {order.user_id.slice(0,8)}...</td>
-                    <td className="p-4 text-sm font-bold text-primary">${(order.total_price || 0).toLocaleString()}</td>
+                    <td className="p-4 text-sm font-bold text-primary">Tk{(order.total_price || 0).toLocaleString()}</td>
                     <td className="p-4">
                       <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-sm border ${['paid','complete'].includes(order.payment_status) ? 'bg-green-50 text-green-700 border-green-100' : 'bg-orange-50 text-orange-700 border-orange-100'}`}>{order.payment_status}</span>
                     </td>
