@@ -97,11 +97,11 @@ const AdminLayout = () => {
             );
           })}
           
-          <div className="mt-8 px-4 pb-8">
+          {/* <div className="mt-8 px-4 pb-8">
              <button className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white py-3 rounded-sm text-[11px] uppercase tracking-widest font-bold transition-all border border-white/10">
                 <FaFileCsv size={14} /> Download Report
              </button>
-          </div>
+          </div> */}
         </nav>
       </aside>
 

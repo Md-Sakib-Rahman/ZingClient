@@ -124,10 +124,10 @@ const DashboardOverview = () => {
         {/* Left: Revenue Timeline (Area Chart) */}
         <div className="lg:col-span-2 bg-white p-6 rounded-sm border border-accent/20 shadow-sm">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-primary">Revenue Trends</h3>
-            <select className="text-xs border rounded p-1 bg-gray-50 outline-none">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-primary">Revenue Trends - Daily</h3>
+            {/* <select className="text-xs border rounded p-1 bg-gray-50 outline-none">
               <option>This Month</option>
-            </select>
+            </select> */}
           </div>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
