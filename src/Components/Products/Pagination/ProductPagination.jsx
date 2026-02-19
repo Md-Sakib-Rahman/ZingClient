@@ -60,27 +60,3 @@ const ProductPagination = ({ current, total, onPageChange }) => {
 
 export default ProductPagination;
 
-// import React from 'react'
-
-// const ProductPagination = ({ current, total, onPageChange }) => {
-//   return (
-//     <div>
-//       <div className="flex items-center gap-4">
-//       {[...Array(total)].map((_, i) => (
-//         <button
-//           key={i + 1}
-//           onClick={() => onPageChange(i + 1)}
-//           className={`w-8 h-8 text-[10px] font-bold transition-all border rounded-sm
-//             ${current === i + 1 
-//               ? 'bg-primary text-white border-primary' 
-//               : 'text-primary/40 border-accent/20 hover:border-primary'}`}
-//         >
-//           {String(i + 1).padStart(2, '0')}
-//         </button>
-//       ))}
-//     </div>
-//     </div>
-//   )
-// }
-
-// export default ProductPagination

@@ -149,56 +149,7 @@ const AdminLayout = () => {
   );
 };
 
-// Default Dashboard Content
-// const AdminDashboardOverview = () => (
-//   <div className="space-y-8 animate-in fade-in duration-500">
-//     <div className="flex justify-between items-center">
-//         <h1 className="text-2xl font-bold text-primary tracking-tight">Dashboard Overview</h1>
-//         <button className="text-xs font-bold text-secondary uppercase tracking-widest border-b border-secondary pb-1 hover:text-primary hover:border-primary transition-colors">
-//             View Full Analytics
-//         </button>
-//     </div>
 
-//     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//       <StatCard title="Total Revenue" value="$42,390" trend="+15.4%" />
-//       <StatCard title="Open Orders" value="18" trend="Urgent" />
-//       <StatCard title="Total Users" value="1,240" trend="+12 this week" />
-//     </div>
-    
-//     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-//       <div className="h-80 bg-white rounded-sm border border-accent/20 flex flex-col items-center justify-center p-6">
-//         <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary/30 mb-4">Sales Analytics</p>
-//         <div className="w-full h-full bg-base-100/50 rounded-sm border border-dashed border-accent/40 flex items-center justify-center text-accent font-serif italic text-sm">
-//           Chart visualization loading...
-//         </div>
-//       </div>
-//       <div className="h-80 bg-white rounded-sm border border-accent/20 p-6">
-//         <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary/30 mb-4">Recent Activity</p>
-//         <ul className="space-y-4">
-//           {[1, 2, 3].map(i => (
-//             <li key={i} className="flex gap-3 border-b border-base-100 pb-3 last:border-0">
-//               <div className="w-2 h-2 rounded-full bg-secondary mt-1"></div>
-//               <div>
-//                 <p className="text-xs font-bold text-primary">New order #102{i} placed</p>
-//                 <p className="text-[10px] text-primary/40">Just now</p>
-//               </div>
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
-//     </div>
-//   </div>
-// );
-
-// const StatCard = ({ title, value, trend }) => (
-//   <div className="bg-white p-6 rounded-sm shadow-sm border border-accent/10 hover:border-secondary transition-colors group">
-//     <p className="text-[9px] uppercase tracking-[0.2em] text-primary/40 font-bold mb-2 group-hover:text-primary transition-colors">{title}</p>
-//     <div className="flex justify-between items-end">
-//       <h3 className="text-3xl font-bold text-primary tracking-tighter">{value}</h3>
-//       <span className="text-[10px] font-bold text-secondary bg-secondary/10 px-2 py-1 rounded-sm uppercase tracking-widest">{trend}</span>
-//     </div>
-//   </div>
-// );
 
 export default AdminLayout;
 
