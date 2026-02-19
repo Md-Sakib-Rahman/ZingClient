@@ -2,7 +2,8 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   // Use your local backend URL
-  baseURL: "https://ecom-clothing-site.onrender.com/",
+  // baseURL: "https://ecom-clothing-site.onrender.com/",
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000, // 10 seconds timeout
   headers: {
     "Content-Type": "application/json",
