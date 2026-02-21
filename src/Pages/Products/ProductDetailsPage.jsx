@@ -9,6 +9,7 @@ import { MdOutlineAddShoppingCart } from "react-icons/md";
 import Swal from "sweetalert2";
 import axiosInstance from "../../Api/publicAxios/axiosInstance";
 import { AuthContext } from "../../Context/AuthContext";
+import SEO from "../../Components/SEO/SEO";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -143,6 +144,12 @@ const ProductDetailsPage = () => {
   const discountPercentage = hasDiscount ? Math.round(product.discount * 100) : 0;
 
   return (
+    <>
+    <SEO
+      title={product.name}
+      description={product.description}
+    >
+    </SEO>
     <div className="min-h-[calc(100vh-300px)]  font-inter text-gray-800 pt-6 pb-20">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         
@@ -367,6 +374,7 @@ const ProductDetailsPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

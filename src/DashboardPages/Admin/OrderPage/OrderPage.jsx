@@ -232,7 +232,6 @@ const OrderPage = () => {
           <option value="pending">Pending</option>
           <option value="confirmed">Confirmed</option>
           <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
           <option value="cancelled">Cancelled</option>
         </select>
         <select name="date_range" value={filters.date_range} onChange={handleFilterChange} className="px-3 py-2 bg-white border border-accent/20 rounded-sm text-sm outline-none cursor-pointer">
@@ -283,7 +282,6 @@ const OrderPage = () => {
                         <option value="pending">Pending</option>
                         <option value="confirmed">Confirmed</option>
                         <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
                         <option value="cancelled">Cancelled</option>
                       </select>
                     </td>

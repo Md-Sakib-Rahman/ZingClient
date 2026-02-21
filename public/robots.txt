@@ -1,0 +1,16 @@
+# Allow all search engines to crawl the site
+User-agent: *
+
+# Block Admin and Dashboard areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /register
+
+# Block sensitive user pages
+Disallow: /cart
+Disallow: /checkout
+Disallow: /profile
+
+# Point to  sitemap
+Sitemap: https://zingfashion.com/sitemap.xml

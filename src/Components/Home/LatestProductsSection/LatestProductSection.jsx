@@ -32,8 +32,8 @@ const LatestProductSection = ({products}) => {
       <hr className='my-10 text-gray-200'/>  
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-        {products.map((product) => (
-          <LatestProductCards key={product.id} product={product} />
+        {products.map((product, idx) => (
+          <LatestProductCards key={idx} product={product} />
         ))}
       </div>
     </section>

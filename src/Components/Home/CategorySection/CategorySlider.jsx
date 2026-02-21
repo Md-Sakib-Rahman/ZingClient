@@ -5,13 +5,9 @@ import { Pagination, Autoplay } from "swiper/modules";
 // Swiper Styles
 import "swiper/css";
 import "swiper/css/pagination";
+import { Link } from "react-router";
 
-// const categories = [
-//   { name: "Menswear", count: "84 Items", img: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?q=80&w=500&auto=format&fit=crop" },
-//   { name: "Womenswear", count: "156 Items", img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=500&auto=format&fit=crop" },
-//   { name: "Accessories", count: "42 Items", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=500&auto=format&fit=crop" },
-//   { name: "Footwear", count: "68 Items", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=500&auto=format&fit=crop" },
-// ];
+
 
 const CategorySlider = ({categories}) => {
   // console.log(categories)
@@ -34,7 +30,8 @@ const CategorySlider = ({categories}) => {
       >
         {categories.map((cat) => (
           <SwiperSlide key={cat._id} className="group cursor-pointer">
-            <div className="relative overflow-hidden aspect-[3/2] rounded-sm transition-all duration-700">
+            <Link to={`/products/${cat._id}`}>
+              <div className="relative overflow-hidden aspect-[3/2] rounded-sm transition-all duration-700">
               {/* Image Overlay */}
               <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors z-10" />
               
@@ -55,6 +52,7 @@ const CategorySlider = ({categories}) => {
                 </h3>
               </div>
             </div>
+            </Link>
           </SwiperSlide>
         ))}
       </Swiper>

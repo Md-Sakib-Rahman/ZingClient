@@ -32,6 +32,7 @@ const DashboardOverview = () => {
     timeSeries: [],
     logs: []
   });
+  const [totalOrder, setTotalOrder] = useState(0)
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -56,6 +57,11 @@ const DashboardOverview = () => {
           timeSeries: formattedChartData,
           logs: logsRes.data.results
         });
+        let total = 0;
+        genRes.data.order_status_distribution.map((item)=>{
+          total += Number(item.count)
+        })
+        setTotalOrder(total)
       } catch (error) {
         console.error("Dashboard fetch error:", error);
       } finally {
@@ -65,7 +71,7 @@ const DashboardOverview = () => {
 
     fetchAnalytics();
   }, []);
-
+  console.log(data)
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -253,7 +259,7 @@ const DashboardOverview = () => {
              </ResponsiveContainer>
              {/* Center Text */}
              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-2xl font-bold text-primary">{data.general?.total_orders || 0}</span>
+                <span className="text-2xl font-bold text-primary">{data.general?.total_orders || totalOrder}</span>
                 <span className="text-[9px] uppercase text-gray-400">Total</span>
              </div>
           </div>

@@ -19,6 +19,7 @@ import {
   FaFileCsv
 } from "react-icons/fa";
 import DashboardOverview from "../../DashboardPages/Admin/DashboardOverview/DashboardOverview";
+import SEO from "../../Components/SEO/SEO";
 
 const AdminLayout = () => {
   const location = useLocation();
@@ -41,7 +42,8 @@ const AdminLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50 font-inter">
-      
+      <SEO title={"Dashboard"} description={"Dashboard"}/>
+      <meta name="robots" content="noindex, nofollow" />
       {/* --- Mobile Overlay (Backdrop) --- */}
       {isMobileMenuOpen && (
         <div 

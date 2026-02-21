@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import CategoriesContainer from '../../Components/Categories/CategoriesContainer/CategoriesContainer';
 import axiosInstance from '../../Api/publicAxios/axiosInstance';
+import SEO from '../../Components/SEO/SEO';
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -22,6 +23,13 @@ const Categories = () => {
   }, []);
 
   return (
+    <>
+    <SEO
+    title={"Categories"}
+    description={"Cloth Categories"}
+    >
+
+    </SEO>
     <div className='min-h-[calc(100vh-340px)] bg-base-100 font-inter'>
       <div className='max-w-7xl mx-auto px-4 py-16'>
         <div className='text-center mb-12'>
@@ -40,6 +48,7 @@ const Categories = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

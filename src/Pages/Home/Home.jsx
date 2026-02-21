@@ -3,6 +3,7 @@ import HeroBanner from '../../Components/Home/HeroBanner/HeroBanner'
 import CategorySection from '../../Components/Home/CategorySection/CategorySection'
 import LatestProductSection from '../../Components/Home/LatestProductsSection/LatestProductSection'
 import axiosInstance from '../../Api/publicAxios/axiosInstance'
+import SEO from '../../Components/SEO/SEO'
  
 
 const Home = () => {
@@ -23,7 +24,6 @@ const Home = () => {
           axiosInstance.get("products/get-attributes/"),
           axiosInstance.get("products/search-products?limit=4")
         ]);
-        console.log(productRes.data.results )
         // "Batch" the state update into one single call to avoid cascading renders
         setData({
           banners: bannerRes.data.banners || [],
@@ -39,18 +39,27 @@ const Home = () => {
 
     fetchHomeData();
     }, []);
-  if (data.loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-base-100">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    );
-  }  
+ 
   return (
-    <>            
-        <HeroBanner banners={data.banners}/>
-        <CategorySection categories={data.categories}/>
-        <LatestProductSection products={data.products}/>
+    <>        
+        <SEO 
+        title="Home" 
+        description="Shop Fashinable Cloths Online From Anywhere In Bangladesh"
+        type="website"
+      />
+
+       
+        {data.loading ? (
+        <div className="min-h-screen flex items-center justify-center bg-base-100">
+          <span className="loading loading-spinner loading-lg text-primary"></span>
+        </div>
+      ) : (
+        <>
+          <HeroBanner banners={data.banners}/>
+          <CategorySection categories={data.categories}/>
+          <LatestProductSection products={data.products}/>
+        </>
+      )}
     </>
   )
 }
