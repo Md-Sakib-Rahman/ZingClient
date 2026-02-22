@@ -28,8 +28,8 @@ const CatButtonContainer = () => {
   return (
     <div className='flex gap-4 justify-center items-center flex-wrap  w-full'>
       {
-        categories.map((category) => (
-          <CategoryButton key={category} category={category}/>
+        categories.map((category,idx) => (
+          <CategoryButton key={idx} category={category}/>
         ))
       }
        

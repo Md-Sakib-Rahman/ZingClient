@@ -179,7 +179,7 @@ const ProductDetailsPage = () => {
               <img
                 src={product.image_urls[activeImage]}
                 alt={product.name}
-                className="w-full h-full object-cover object-center transition-transform duration-500"
+                className="w-full h-full object-contain object-center transition-transform duration-500"
               />
               
               {/* Navigation Arrows */}
@@ -226,7 +226,7 @@ const ProductDetailsPage = () => {
                       <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"/> In Stock
                     </span>
                   ) : (
-                    <span className="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-1 rounded">Out of Stock</span>
+                    <span className="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-1 rounded"></span>
                   )}
                 </div>
                 

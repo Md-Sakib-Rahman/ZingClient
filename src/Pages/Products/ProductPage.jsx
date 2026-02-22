@@ -95,7 +95,7 @@ const ProductPage = () => {
                 >
                   All Products
                 </button>
-                {subCategories.map((sub) => (
+                {subCategories.map((sub,idx) => (
                   <button
                     key={sub._id}
                     onClick={() => handleFilterChange(sub._id)}
@@ -118,8 +118,8 @@ const ProductPage = () => {
               <>
                 {products.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {products.map((product) => (
-                      <ProductCard key={product._id} product={product} />
+                    {products.map((product, idx) => (
+                      <ProductCard key={idx} product={product} />
                     ))}
                   </div>
                 ) : (

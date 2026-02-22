@@ -16,7 +16,8 @@ import {
   FaClipboardList, 
   FaUserPlus, 
   FaUserShield,
-  FaFileCsv
+  FaFileCsv,
+  FaTags
 } from "react-icons/fa";
 import DashboardOverview from "../../DashboardPages/Admin/DashboardOverview/DashboardOverview";
 import SEO from "../../Components/SEO/SEO";
@@ -34,6 +35,7 @@ const AdminLayout = () => {
     { name: "Create Product", path: "/admin/create-product", icon: <FaBoxOpen size={18} />, section: "Products" },
     { name: "Categories", path: "/admin/listing", icon: <MdLayers size={20} />, section: "Catalog" },
     { name: "Create Category", path: "/admin/create-category", icon: <MdAddCircle size={20} />, section: "Catalog" },
+    { name: "Attributes", path: "/admin/attributes", icon: <FaTags size={18} />, section: "Catalog" },
     { name: "Order History & CSV", path: "/admin/orders", icon: <FaClipboardList size={18} />, section: "Orders" },
     { name: "All Users", path: "/admin/users", icon: <MdPeople size={20} />, section: "Users" },
     { name: "Employees", path: "/admin/users/employees", icon: <FaUserShield size={18} />, section: "Users" },

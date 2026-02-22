@@ -4,7 +4,6 @@ import SEO from '../../SEO/SEO';
 
 const CategoryButton = ({category}) => {
   const { id } = useParams();
-  console.log(id)
   return (
     <>
     

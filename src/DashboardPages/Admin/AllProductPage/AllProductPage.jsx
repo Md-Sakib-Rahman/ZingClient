@@ -184,8 +184,8 @@ const AllProductPage = () => {
           className="px-3 py-2.5 bg-white border border-accent/20 rounded-sm text-sm focus:border-primary outline-none"
         >
           <option value="">All Categories</option>
-          {attributes.categories.map(cat => (
-            <option key={cat._id} value={cat._id}>{cat.name}</option>
+          {attributes.categories.map((cat, idx) => (
+            <option key={idx} value={cat._id}>{cat.name}</option>
           ))}
         </select>
 
@@ -197,8 +197,8 @@ const AllProductPage = () => {
           className="px-3 py-2.5 bg-white border border-accent/20 rounded-sm text-sm focus:border-primary outline-none disabled:bg-gray-100 disabled:text-gray-400"
         >
           <option value="">All Subcategories</option>
-          {subcategories.map(sub => (
-            <option key={sub._id} value={sub._id}>{sub.name}</option>
+          {subcategories.map((sub, idx) => (
+            <option key={idx} value={sub._id}>{sub.name}</option>
           ))}
         </select>
 
@@ -246,7 +246,7 @@ const AllProductPage = () => {
                   </td>
                 </tr>
               ) : (
-                products.map((product) => {
+                products.map((product, idx) => {
                   
                   // --- DISCOUNT CALCULATION ---
                   const hasDiscount = product.discount && product.discount > 0 && product.discount < 1;
@@ -254,7 +254,7 @@ const AllProductPage = () => {
                   const discountPercentage = hasDiscount ? Math.round(product.discount * 100) : 0;
 
                   return (
-                    <tr key={product._id} className="hover:bg-gray-50/50 transition-colors group">
+                    <tr key={idx} className="hover:bg-gray-50/50 transition-colors group">
                       
                       {/* Image */}
                       <td className="p-4">

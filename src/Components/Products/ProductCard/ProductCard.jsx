@@ -140,12 +140,12 @@ const ProductCard = ({ product }) => {
             )}
           </div>
 
-          {/* Stock Warning */}
+          {/* Stock Warning
           {stock < 5 && stock > 0 && (
             <span className="text-[9px] uppercase tracking-widest text-red-500 font-bold bg-red-50 px-1 rounded">
               {stock} left
             </span>
-          )}
+          )} */}
         </div>
       </div>
     </div>
