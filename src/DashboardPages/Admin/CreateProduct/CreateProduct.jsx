@@ -314,9 +314,10 @@ const CreateProduct = () => {
                       ${isSelected ? "border-primary bg-primary text-white" : "border-accent/20 bg-white text-primary hover:border-primary"}
                     `}
                   >
+                    
                     <span 
-                      className="w-3 h-3 rounded-full border border-white/30" 
-                      style={{ backgroundColor: color.name.toLowerCase().replace(" ", "") }}
+                      className="w-3 h-3 rounded-full border border-gray-300 shadow-sm" 
+                      style={{ backgroundColor: color.color_hash || color.name.toLowerCase().replace(" ", "") }}
                     />
                     {color.name}
                   </button>

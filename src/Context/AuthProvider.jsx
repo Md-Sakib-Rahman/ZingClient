@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    setLoading(true)
     refreshSession();
   }, []);
 

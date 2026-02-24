@@ -296,13 +296,17 @@ const ProductDetailsPage = () => {
                     <div className="flex flex-wrap gap-3">
                       {product.color_ids.map((colorObj, idx) => {
                         const isSelected = selectedColor === colorObj._id;
+                        
+                        // FIX: Use color_hash if available, otherwise fallback to the old name manipulation
+                        const backgroundColor = colorObj.color_hash || colorObj.name.toLowerCase().replace(/\s+/g, '');
+
                         return (
                           <button
                             key={idx}
                             onClick={() => setSelectedColor(colorObj._id)}
                             title={colorObj.name}
-                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isSelected ? 'ring-2 ring-offset-2 ring-primary' : 'hover:scale-110'}`}
-                            style={{ backgroundColor: colorObj.name.toLowerCase().replace(/\s+/g, '') }}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all border border-gray-200 shadow-sm ${isSelected ? 'ring-2 ring-offset-2 ring-primary' : 'hover:scale-110'}`}
+                            style={{ backgroundColor }}
                           >
                             {isSelected && <div className="w-1.5 h-1.5 bg-white rounded-full shadow-sm" />}
                           </button>
@@ -398,4 +402,3 @@ const NotFoundScreen = () => (
 );
 
 export default ProductDetailsPage;
-

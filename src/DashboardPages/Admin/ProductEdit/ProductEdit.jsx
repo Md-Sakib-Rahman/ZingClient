@@ -9,8 +9,8 @@ import axiosInstance from "../../../Api/publicAxios/axiosInstance";
 const ProductEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm();
-
+  const { register, handleSubmit, setValue, watch, formState: { errors, dirtyFields } } = useForm();
+  
   // --- State ---
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -45,27 +45,23 @@ const ProductEdit = () => {
         setAttributes(attrRes.data);
         const product = productRes.data.product;
 
-        // Populate Form Fields
         setValue("name", product.name);
         setValue("description", product.description);
         setValue("price", product.price);
-        setValue("discount", product.discount || 0); // NEW: Populate Discount
+        setValue("discount", product.discount || 0); 
         setValue("stock", product.stock);
         setValue("gender", product.gender);
         setValue("category", product.category_id);
         setValue("type", product.type || product.subcategory_id);
 
-        // Setup Selection States
         setSelectedColors(product.color_ids || []);
         setInitialColors(product.color_ids || []);
 
         setSelectedSizes(product.size_ids || []);
         setInitialSizes(product.size_ids || []);
 
-        // Setup Images
         setExistingImages(product.image_urls || []);
 
-        // Fetch subcategories
         if (product.category_id) {
           const subRes = await axiosInstance.get(`/products/get-subcategories/${product.category_id}/`);
           setSubcategories(subRes.data.subcategories || []);
@@ -92,7 +88,6 @@ const ProductEdit = () => {
       setSubcategories([]);
     }
   }, [watchedCategory]);
-
 
   // --- 3. Handlers ---
   const toggleSelection = (id, currentList, setList) => {
@@ -122,63 +117,123 @@ const ProductEdit = () => {
     setImagesToRemove(prev => [...prev, url]);
   };
 
-  // --- 4. Submit Logic ---
+// --- 4. Submit Logic ---
   const onSubmit = async (data) => {
-    setSubmitting(true);
-    try {
-      // --- PART A: Update Text Details ---
-      const diffPayload = {
-        name: data.name,
-        price: Number(data.price),
-        discount: Number(data.discount), // NEW: Send Discount
-        description: data.description,
-        stock: Number(data.stock),
-        gender: data.gender,
-        category_id: data.category,
-        subcategory_id: data.type,
-      };
-
-      // Diffing Colors/Sizes
-      const addedColors = selectedColors.filter(id => !initialColors.includes(id));
-      const removedColors = initialColors.filter(id => !selectedColors.includes(id));
-      if (addedColors.length > 0) diffPayload.add_color_ids = addedColors;
-      if (removedColors.length > 0) diffPayload.remove_color_ids = removedColors;
-
-      const addedSizes = selectedSizes.filter(id => !initialSizes.includes(id));
-      const removedSizes = initialSizes.filter(id => !selectedSizes.includes(id));
-      if (addedSizes.length > 0) diffPayload.add_size_ids = addedSizes;
-      if (removedSizes.length > 0) diffPayload.remove_size_ids = removedSizes;
-
-      // 1. Send Product Update
-      await axiosInstance.put(`/products/update-product/${id}/`, diffPayload, {
-        timeout: 60000 
+    // 1. Validate: At least one image must remain
+    const totalRemainingImages = existingImages.length + newImageFiles.length;
+    if (totalRemainingImages < 1) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Image Required",
+        text: "A product must have at least one image.",
+        confirmButtonColor: "#1A2B23",
       });
+    }
 
-      // --- PART B: Update Images ---
-      if (newImageFiles.length > 0 || imagesToRemove.length > 0) {
-        const formData = new FormData();
-        newImageFiles.forEach(file => formData.append("add_images", file));
-        imagesToRemove.forEach(url => formData.append("remove_images", url));
+    // 2. Diffing Arrays (Colors & Sizes)
+    const addedColors = selectedColors.filter(id => !initialColors.includes(id));
+    const removedColors = initialColors.filter(id => !selectedColors.includes(id));
+    const addedSizes = selectedSizes.filter(id => !initialSizes.includes(id));
+    const removedSizes = initialSizes.filter(id => !selectedSizes.includes(id));
 
-        await axiosInstance.put(`/products/update-product-images/${id}/`, formData, {
-            headers: { "Content-Type": undefined },
-            timeout: 120000 
-        });
+    // 3. Determine EXACTLY what changed
+    const hasAttributeChanges = addedColors.length > 0 || removedColors.length > 0 || addedSizes.length > 0 || removedSizes.length > 0;
+    const hasNewImages = newImageFiles.length > 0;
+    const hasImageDeletionsOnly = imagesToRemove.length > 0 && !hasNewImages;
+    const hasTextChanges = Object.keys(dirtyFields).length > 0 || hasAttributeChanges || hasImageDeletionsOnly;
+
+    if (!hasTextChanges && !hasNewImages) {
+      return Swal.fire("No Changes", "You haven't made any modifications.", "info");
+    }
+
+    setSubmitting(true);
+    let hasError = false;
+
+    // ==========================================
+    // PART A: UPDATE TEXT & DELETE IMAGES
+    // ==========================================
+    if (hasTextChanges) {
+      try {
+        const diffPayload = {
+          name: data.name,
+          price: Number(data.price),
+          discount: data.discount ? Number(data.discount) : 0,
+          description: data.description,
+          stock: Number(data.stock),
+          gender: data.gender,
+          category_id: data.category || null,
+          subcategory_id: data.type || null,
+        };
+
+        if (addedColors.length > 0) diffPayload.add_color_ids = addedColors;
+        if (removedColors.length > 0) diffPayload.remove_color_ids = removedColors;
+        if (addedSizes.length > 0) diffPayload.add_size_ids = addedSizes;
+        if (removedSizes.length > 0) diffPayload.remove_size_ids = removedSizes;
+
+        if (hasImageDeletionsOnly) {
+           diffPayload.image_urls = existingImages;
+        }
+
+        await axiosInstance.put(`/products/update-product/${id}/`, diffPayload, { timeout: 60000 });
+      } catch (error) {
+        console.error("Text Update Error:", error);
+        Swal.fire("Error", "Failed to update product details.", "error");
+        hasError = true;
       }
+    }
 
-      Swal.fire("Success", "Product updated successfully!", "success").then(() => {
+    // ==========================================
+    // PART B: UPDATE IMAGES (ADDITIONS ONLY)
+    // ==========================================
+    if (hasNewImages && !hasError) {
+      try {
+        const formData = new FormData();
+        
+        newImageFiles.forEach(file => formData.append("add_images", file));
+
+        // 🔥 CRITICAL FIX: We MUST always send this as a stringified JSON array!
+        // If it's empty, it sends "[]" which safely bypasses the backend crash.
+        formData.append("remove_images", JSON.stringify(imagesToRemove));
+
+        const token = localStorage.getItem("token"); 
+        const baseUrl = axiosInstance.defaults.baseURL?.replace(/\/$/, '') || ""; 
+        const url = `${baseUrl}/products/update-product-images/${id}/`;
+
+        const res = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Accept": "application/json",
+            ...(token ? { "Authorization": `Bearer ${token}` } : {})
+          },
+          body: formData
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.details || errorData.error || `Server Error ${res.status}`);
+        }
+
+      } catch (error) {
+        console.error("Image Update Error:", error);
+        Swal.fire("Image Update Failed", error.message, "error");
+        hasError = true;
+      }
+    }
+
+    setSubmitting(false);
+
+    // ==========================================
+    // SUCCESS REDIRECT
+    // ==========================================
+    if (!hasError) {
+      Swal.fire({
+        icon: "success",
+        title: "Product Updated",
+        text: "Changes saved successfully.",
+        confirmButtonColor: "#1A2B23",
+      }).then(() => {
         navigate("/admin/products");
       });
-
-    } catch (error) {
-      console.error("Update Error:", error);
-      if (error.code === 'ECONNABORTED') {
-        return Swal.fire("Timeout", "Server took too long.", "warning");
-      }
-      const msg = error.response?.data?.message || "Failed to update product.";
-      Swal.fire("Update Failed", typeof msg === 'object' ? JSON.stringify(msg) : msg, "error");
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -198,12 +253,9 @@ const ProductEdit = () => {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
             {/* Left Column: Details */}
             <div className="lg:col-span-2 space-y-6">
-                
                 {/* Basic Info */}
                 <div className="bg-white p-6 rounded-sm border border-accent/20 shadow-sm space-y-4">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-primary/40 border-b border-accent/10 pb-2">Basic Info</h3>
@@ -213,7 +265,6 @@ const ProductEdit = () => {
                         <input {...register("name")} className="w-full p-3 bg-gray-50 border border-accent/20 rounded-sm text-sm focus:border-primary outline-none" />
                      </div>
                      
-                     {/* Row: Price, Discount, Stock */}
                      <div className="col-span-2 grid grid-cols-3 gap-4">
                         <div>
                             <label className="text-xs font-bold text-primary mb-1 block">Price</label>
@@ -222,11 +273,7 @@ const ProductEdit = () => {
                         <div>
                             <label className="text-xs font-bold text-primary mb-1 block">Discount (0-1)</label>
                             <input 
-                                type="number" 
-                                step="0.01" 
-                                min="0" 
-                                max="1" 
-                                placeholder="e.g. 0.2 for 20%" 
+                                type="number" step="0.01" min="0" max="1" placeholder="e.g. 0.2 for 20%" 
                                 {...register("discount")} 
                                 className="w-full p-3 bg-gray-50 border border-accent/20 rounded-sm text-sm focus:border-primary outline-none" 
                             />
@@ -259,7 +306,11 @@ const ProductEdit = () => {
                                onClick={() => toggleSelection(color._id, selectedColors, setSelectedColors)}
                                className={`px-3 py-1.5 rounded-sm text-xs font-bold border flex items-center gap-2 transition-all ${selectedColors.includes(color._id) ? "bg-primary text-white border-primary" : "bg-white text-primary border-accent/20"}`}
                             >
-                               <span className="w-2 h-2 rounded-full bg-gray-200" style={{ backgroundColor: color.name.toLowerCase().replace(" ", "") }} />
+                               {/* FIX: Map color_hash accurately to the visual indicator */}
+                               <span 
+                                 className="w-3 h-3 rounded-full border border-gray-300 shadow-sm" 
+                                 style={{ backgroundColor: color.color_hash || color.name.toLowerCase().replace(" ", "") }} 
+                               />
                                {color.name}
                             </button>
                          ))}
@@ -287,7 +338,6 @@ const ProductEdit = () => {
 
             {/* Right Column: Classification & Images */}
             <div className="space-y-6">
-                
                 {/* Categories */}
                 <div className="bg-white p-6 rounded-sm border border-accent/20 shadow-sm space-y-4">
                    <h3 className="text-xs font-bold uppercase tracking-widest text-primary/40 border-b border-accent/10 pb-2">Category</h3>

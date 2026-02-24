@@ -31,7 +31,8 @@ const AllProductPage = () => {
     category: "",
     subcategory: "",
     min_price: "",
-    max_price: ""
+    max_price: "",
+    stock_status: "" 
   });
   const [pagination, setPagination] = useState({
     page: 1,
@@ -64,10 +65,17 @@ const AllProductPage = () => {
       if (filters.category) params.append("category_id", filters.category);
       if (filters.subcategory) params.append("subcategory_id", filters.subcategory);
       if (filters.min_price) params.append("min_price", filters.min_price);
+      if (filters.max_price) params.append("max_price", filters.max_price);
+      
+      // NEW: Apply instock/outstock params based on selection
+      if (filters.stock_status === "in_stock") {
+        params.append("instock", "true");
+      } else if (filters.stock_status === "out_of_stock") {
+        params.append("outstock", "true");
+      }
 
       const res = await axiosInstance.get(`/products/search-products/?${params.toString()}`);
       setProducts(res.data.results || []);
-      
       setPagination(prev => ({
         ...prev,
         totalPages: res.data.total_pages,
@@ -112,7 +120,7 @@ const AllProductPage = () => {
   
   const getColorHex = (id) => {
     const color = attributes.colors.find(c => c._id === id);
-    return color ? color.name.toLowerCase().replace(" ", "") : "#eee";
+    return color ? (color.color_hash || color.name.toLowerCase().replace(" ", "")) : "#eee";
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -202,10 +210,14 @@ const AllProductPage = () => {
           ))}
         </select>
 
-        <select className="px-3 py-2.5 bg-white border border-accent/20 rounded-sm text-sm focus:border-primary outline-none">
-          <option value="">Stock Status</option>
+        <select 
+          name="stock_status"
+          value={filters.stock_status}
+          onChange={handleFilterChange}
+          className="px-3 py-2.5 bg-white border border-accent/20 rounded-sm text-sm focus:border-primary outline-none"
+        >
+          <option value="">All Stock</option>
           <option value="in_stock">In Stock</option>
-          <option value="low_stock">Low Stock</option>
           <option value="out_of_stock">Out of Stock</option>
         </select>
       </div>
@@ -285,7 +297,7 @@ const AllProductPage = () => {
                         </span>
                       </td>
 
-                      {/* Price (UPDATED LOGIC) */}
+                      {/* Price */}
                       <td className="p-4">
                          {hasDiscount ? (
                             <div className="flex flex-col items-start">

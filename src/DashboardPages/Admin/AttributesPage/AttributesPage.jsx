@@ -10,6 +10,7 @@ const AttributesPage = () => {
 
   // Form states
   const [newColor, setNewColor] = useState("");
+  const [newColorHash, setNewColorHash] = useState("#000000"); // Added state for Color Hex
   const [newSize, setNewSize] = useState("");
   const [submittingColor, setSubmittingColor] = useState(false);
   const [submittingSize, setSubmittingSize] = useState(false);
@@ -39,9 +40,17 @@ const AttributesPage = () => {
 
     setSubmittingColor(true);
     try {
-      await axiosInstance.post("/products/add-color/", { color_name: newColor.trim() });
+      // Updated payload to include color_hash
+      await axiosInstance.post("/products/add-color/", { 
+        color_name: newColor.trim(),
+        color_hash: newColorHash
+      });
       Swal.fire({ icon: "success", title: "Color Added", toast: true, position: "top-end", timer: 1500, showConfirmButton: false });
+      
+      // Reset form
       setNewColor("");
+      setNewColorHash("#000000"); 
+      
       fetchAttributes();
     } catch (err) {
       console.error(err);
@@ -82,7 +91,6 @@ const AttributesPage = () => {
 
     if (result.isConfirmed) {
       try {
-        // Note: Axios DELETE with body requires the 'data' property
         await axiosInstance.delete(`/products/delete-color/${id}/`, {
           data: { color_name: name }
         });
@@ -138,19 +146,33 @@ const AttributesPage = () => {
           </div>
           
           <div className="p-5 space-y-6 flex-1">
-             <form onSubmit={handleAddColor} className="flex gap-2">
+             <form onSubmit={handleAddColor} className="flex gap-2 items-center">
+                {/* Color Picker Wrapper */}
+                <div 
+                  className="w-10 h-10 shrink-0 rounded-sm border border-accent/20 overflow-hidden relative cursor-pointer"
+                  title="Pick a color"
+                >
+                  <input 
+                    type="color" 
+                    value={newColorHash}
+                    onChange={(e) => setNewColorHash(e.target.value)}
+                    className="absolute -top-2 -left-2 w-16 h-16 cursor-pointer"
+                  />
+                </div>
+                
                 <input 
                   type="text" 
                   value={newColor} 
                   onChange={(e) => setNewColor(e.target.value)} 
-                  placeholder="e.g. Red, Navy Blue" 
+                  placeholder="e.g. Burgundy, Navy Blue" 
                   className="flex-1 p-2.5 bg-gray-50 border border-accent/20 rounded-sm text-sm focus:border-primary outline-none"
                   required
                 />
+                
                 <button 
                   type="submit" 
                   disabled={submittingColor}
-                  className="px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-2.5 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
                   <FaPlus /> Add
                 </button>
@@ -160,11 +182,16 @@ const AttributesPage = () => {
                 {colors.length === 0 ? <p className="text-xs text-gray-400 italic">No colors found.</p> : colors.map(color => (
                   <div key={color._id} className="flex items-center justify-between p-3 border border-accent/10 rounded-sm hover:bg-gray-50 transition-colors group">
                     <div className="flex items-center gap-3">
+                       {/* Display the selected color circle */}
                        <span 
                          className="w-4 h-4 rounded-full border border-gray-200 shadow-sm" 
-                         style={{ backgroundColor: color.name.toLowerCase().replace(" ", "") }}
+                         style={{ backgroundColor: color.color_hash || color.name.toLowerCase().replace(" ", "") }} // Fallback to name if old data lacks hash
                        />
-                       <span className="text-sm font-medium text-primary">{color.name}</span>
+                       <span className="text-sm font-medium text-primary capitalize">
+                          {color.name}
+                          {/* Show the hash code if it exists */}
+                          {color.color_hash && <span className="text-xs text-gray-400 font-normal ml-2">({color.color_hash.toUpperCase()})</span>}
+                       </span>
                     </div>
                     <button 
                       onClick={() => handleDeleteColor(color._id, color.name)}
@@ -199,7 +226,7 @@ const AttributesPage = () => {
                 <button 
                   type="submit" 
                   disabled={submittingSize}
-                  className="px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-2.5 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
                   <FaPlus /> Add
                 </button>

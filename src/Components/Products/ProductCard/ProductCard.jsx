@@ -1,10 +1,9 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { FaRegHeart, FaEye } from "react-icons/fa";
-import { MdOutlineAddShoppingCart } from "react-icons/md";
+import { FaEye } from "react-icons/fa";
 import Swal from 'sweetalert2';
-import { AuthContext } from '../../../Context/AuthContext'; // Adjust path
-import axiosInstance from '../../../Api/publicAxios/axiosInstance'; // Adjust path
+import { AuthContext } from '../../../Context/AuthContext'; 
+import axiosInstance from '../../../Api/publicAxios/axiosInstance'; 
 
 const ProductCard = ({ product }) => {
   const { user } = useContext(AuthContext);
@@ -13,7 +12,6 @@ const ProductCard = ({ product }) => {
   const { _id, name, price, image_urls, category_name, stock, size_ids, color_ids, discount } = product;
 
   // --- Logic: Discount Calculation ---
-  // Discount is 0 to 1 (e.g., 0.2 means 20% off)
   const hasDiscount = discount && discount > 0 && discount < 1;
   const discountedPrice = hasDiscount ? price * (1 - discount) : price;
   const discountPercentage = hasDiscount ? Math.round(discount * 100) : 0;
@@ -23,7 +21,6 @@ const ProductCard = ({ product }) => {
     e.preventDefault(); 
     e.stopPropagation();
 
-    // 1. Check for Variants (Size/Color)
     if ((size_ids && size_ids.length > 0) || (color_ids && color_ids.length > 0)) {
       navigate(`/productdetailspage/${_id}`);
       return;
@@ -37,11 +34,9 @@ const ProductCard = ({ product }) => {
 
     try {
       if (user) {
-        // SCENARIO A: Logged In -> API Call
         await axiosInstance.post('/cart/add', cartItem);
         showSuccessToast();
       } else {
-        // SCENARIO B: Guest -> LocalStorage
         const localCart = JSON.parse(localStorage.getItem('zing_cart')) || [];
         const existingIndex = localCart.findIndex(item => item.product_id === _id);
         
@@ -76,7 +71,18 @@ const ProductCard = ({ product }) => {
       {/* Image Container */}
       <div className="relative aspect-[3/4] overflow-hidden bg-base-100 rounded-sm w-full">
         
-        {/* Discount Badge */}
+        {/* NEW: Stock Tag (Top Left) */}
+        {stock > 0 ? (
+           <span className="absolute top-2 left-2 z-20 bg-green-600/90 backdrop-blur-sm text-white text-[9px] font-bold px-2 py-1 uppercase tracking-wider rounded-sm shadow-sm">
+             In Stock
+           </span>
+        ) : (
+           <span className="absolute top-2 left-2 z-20 bg-gray-900/90 backdrop-blur-sm text-white text-[9px] font-bold px-2 py-1 uppercase tracking-wider rounded-sm shadow-sm">
+             Out of Stock
+           </span>
+        )}
+
+        {/* Discount Badge (Top Right) */}
         {hasDiscount && (
           <span className="absolute top-2 right-2 z-20 bg-red-600 text-white text-[9px] font-bold px-2 py-1 uppercase tracking-wider rounded-sm shadow-sm">
             -{discountPercentage}%
@@ -86,14 +92,14 @@ const ProductCard = ({ product }) => {
         <img
           src={image_urls[0]}
           alt={name}
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className={`h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 ${stock === 0 ? 'opacity-80 grayscale-[40%]' : ''}`}
         />
         
         {image_urls[1] && (
           <img
             src={image_urls[1]}
             alt={`${name} alternative`}
-            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 lg:group-hover:opacity-100"
+            className={`absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 lg:group-hover:opacity-100 ${stock === 0 ? 'grayscale-[40%]' : ''}`}
           />
         )}
 
@@ -139,13 +145,6 @@ const ProductCard = ({ product }) => {
               </span>
             )}
           </div>
-
-          {/* Stock Warning
-          {stock < 5 && stock > 0 && (
-            <span className="text-[9px] uppercase tracking-widest text-red-500 font-bold bg-red-50 px-1 rounded">
-              {stock} left
-            </span>
-          )} */}
         </div>
       </div>
     </div>
